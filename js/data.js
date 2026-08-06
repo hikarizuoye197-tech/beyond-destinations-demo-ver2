@@ -331,6 +331,47 @@ const EXPERIENCES = [
   },
 ];
 
+/* ---------- 仮写真(Wikimedia Commons) ---------- */
+/* プロトタイプ用のフリー素材。本番では権利処理済みの実写に差し替える。
+   読み込み失敗時は bdExpImages() が SVGアートへフォールバックする。 */
+
+const EXP_PHOTOS = {
+  "mino-washi": [
+    "Japanese paper making 02.jpg",
+    "Japanese paper making 04.jpg",
+    "うだつの上がる町並み (岐阜県美濃市)-うだつmino udatsu020.jpg",
+  ],
+  "seki-hamono": [
+    "Forge de Tsuneharu Matsuda - 3 - 2016-04-19.jpg",
+    "Des briques d'acier au katana - 2016-04-19.jpg",
+    "Seki Sword Tradition Museum 20220716 04.jpg",
+  ],
+  "tokoname-yaki": [
+    "Yakimono-sanpomichi Tokoname (Aichi) 05.jpg",
+    "Noborigama Tokoname 01.jpg",
+    "Yakimono-sanpomichi Tokoname (Aichi) 28.jpg",
+  ],
+  "mikawa-teichiami": [
+    "Mikawa Bay and Saku Island.jpg",
+    "Set Net Fishery off Enoshima.jpg",
+    "網野町三津の定置網漁.jpg",
+  ],
+  "ena-tanada": [
+    "Sakaori Tanada.jpg",
+    "Sakaori Tanada 20210723 01.jpg",
+    "Sakaori Tanada from Mount Kasagi.jpg",
+  ],
+  "chita-cycling": [
+    "Noma lighthouse.jpg",
+    "Nomasaki Todai.jpg",
+    "野間灯台 Beacon Lighthouse Isewan Noma, Aichi - panoramio.jpg",
+  ],
+};
+
+function bdPhotoURL(fileName, width = 1200) {
+  return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(fileName)}?width=${width}`;
+}
+
 /* ---------- データアクセスヘルパー ---------- */
 
 const RETURN_RATE = 0.8; // 地域還元率(手数料20%)
@@ -348,8 +389,13 @@ function bdMuniName(muniId) {
   return m ? (m.name[bdLang()] || m.name.ja) : "";
 }
 
+/* 各体験の画像: 仮写真があればそれを使い、失敗時用にSVGアートを添える */
 function bdExpImages(exp) {
-  return exp.seeds.map((s) => bdArt(s, BD_PALETTES[exp.palette]));
+  const photos = EXP_PHOTOS[exp.id] || [];
+  return exp.seeds.map((s, i) => {
+    const art = bdArt(s, BD_PALETTES[exp.palette]);
+    return { src: photos[i] ? bdPhotoURL(photos[i]) : art, fallback: art };
+  });
 }
 
 /* ---------- 市町村サステナブル度の進捗管理(localStorage) ---------- */

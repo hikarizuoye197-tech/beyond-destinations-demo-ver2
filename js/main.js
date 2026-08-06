@@ -41,6 +41,24 @@ function bdRenderChrome() {
   }
 }
 
+/* ---------- 部品: 画像フォールバック ---------- */
+
+/* 仮写真(外部リンク)が読み込めない場合、SVGアートへ差し替える */
+function bdImgTag(img, alt = "", attrs = "") {
+  return `<img src="${img.src}" data-fallback="${img.fallback}" alt="${alt}" loading="lazy" ${attrs}>`;
+}
+
+function bdBindImgFallback(root = document) {
+  root.querySelectorAll("img[data-fallback]").forEach((el) => {
+    if (el.dataset.bound) return;
+    el.dataset.bound = "1";
+    el.addEventListener("error", () => {
+      el.src = el.dataset.fallback;
+      el.removeAttribute("data-fallback");
+    }, { once: true });
+  });
+}
+
 /* ---------- 部品: スコアリング / 体験カード ---------- */
 
 function bdScoreRing(score, size = 84) {
@@ -63,7 +81,7 @@ function bdExpCard(exp) {
   const img = bdExpImages(exp)[0];
   return `
     <a class="exp-card" href="experience.html?id=${exp.id}" data-category="${exp.category}">
-      <div class="exp-card-img"><img src="${img}" alt="${tx.name}"></div>
+      <div class="exp-card-img">${bdImgTag(img, tx.name)}</div>
       <div class="exp-card-body">
         <p class="exp-card-area">${bdMuniName(exp.muni)}</p>
         <h3 class="exp-card-name">${tx.name}</h3>
@@ -83,6 +101,7 @@ function bdPageIndex() {
   if (!pickup) return;
   const featured = ["mino-washi", "ena-tanada", "mikawa-teichiami"];
   pickup.innerHTML = featured.map((id) => bdExpCard(bdGetExperience(id))).join("");
+  bdBindImgFallback(pickup);
   const heroArt = document.getElementById("hero-art");
   if (heroArt) heroArt.src = bdArt(7, BD_PALETTES.tanada);
   const stripArt = document.getElementById("vision-strip-art");
@@ -99,6 +118,7 @@ function bdPageList() {
     const list =
       current === "all" ? EXPERIENCES : EXPERIENCES.filter((e) => e.category === current);
     grid.innerHTML = list.map(bdExpCard).join("");
+    bdBindImgFallback(grid);
     document.querySelectorAll(".filter-btn").forEach((b) =>
       b.classList.toggle("active", b.dataset.cat === current)
     );
@@ -125,7 +145,7 @@ function bdPageDetail() {
 
   wrap.innerHTML = `
     <div class="detail-hero">
-      <img src="${imgs[0]}" alt="${tx.name}">
+      ${bdImgTag(imgs[0], tx.name)}
       <div class="detail-hero-overlay">
         <p class="detail-area">${bdMuniName(exp.muni)}</p>
         <h1 class="detail-name">${tx.name}</h1>
@@ -140,8 +160,9 @@ function bdPageDetail() {
 
         <h2 class="section-title-sm">${t("detail.gallery")}</h2>
         <div class="detail-gallery">
-          <img src="${imgs[1]}" alt=""><img src="${imgs[2]}" alt="">
+          ${bdImgTag(imgs[1])}${bdImgTag(imgs[2])}
         </div>
+        <p class="photo-credit">${t("detail.photoCredit")}</p>
 
         <h2 class="section-title-sm">${t("detail.highlights")}</h2>
         <ul class="highlight-list">
@@ -185,6 +206,7 @@ function bdPageDetail() {
         </div>
       </aside>
     </div>`;
+  bdBindImgFallback(wrap);
 }
 
 /* ---------- 予約フロー(3ステップ) ---------- */

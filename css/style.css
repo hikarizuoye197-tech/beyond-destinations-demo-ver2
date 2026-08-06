@@ -230,7 +230,8 @@ input, select { font-family: inherit; }
 }
 .detail-desc { font-size: 1rem; max-width: 38em; }
 .detail-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.detail-gallery img { aspect-ratio: 4/3; object-fit: cover; }
+.detail-gallery img { aspect-ratio: 4/3; object-fit: cover; width: 100%; }
+.photo-credit { font-size: 0.7rem; color: var(--ink-soft); margin-top: 10px; }
 
 .highlight-list { list-style: none; }
 .highlight-list li {

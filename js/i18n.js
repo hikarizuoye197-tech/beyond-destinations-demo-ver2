@@ -69,6 +69,7 @@ const STRINGS = {
     "detail.score.contribute": "この体験を予約すると、開催地のサステナブル度が上昇します。",
     "detail.book": "この体験を予約する",
     "detail.gallery": "体験のようす",
+    "detail.photoCredit": "※ 写真は Wikimedia Commons のフリー素材(仮)です。本番では実写に差し替えます。",
 
     "booking.title": "予約",
     "booking.step1": "日時・人数",
@@ -191,6 +192,7 @@ const STRINGS = {
     "detail.score.contribute": "Booking this experience raises the sustainability level of its municipality.",
     "detail.book": "Book this experience",
     "detail.gallery": "Scenes from the experience",
+    "detail.photoCredit": "※ Photos are placeholder images from Wikimedia Commons, to be replaced with original photography.",
 
     "booking.title": "Booking",
     "booking.step1": "Date & guests",
@@ -313,6 +315,7 @@ const STRINGS = {
     "detail.score.contribute": "Réserver cette expérience élève le niveau de durabilité de sa commune.",
     "detail.book": "Réserver cette expérience",
     "detail.gallery": "Scènes de l'expérience",
+    "detail.photoCredit": "※ Photos provisoires issues de Wikimedia Commons, à remplacer par des photographies originales.",
 
     "booking.title": "Réservation",
     "booking.step1": "Date & participants",
