@@ -2,7 +2,7 @@
    BEYOND DESTINATIONS — データ層(海外の旅行会社向け)
    商品データ / 料金表 / 写真 / プレースホルダー画像(SVG生成)
    ---------------------------------------------------------
-   ※ 料金・内訳は説明資料(ブルビック決勝用 付録A6・A7)と同じ数字。
+   ※ 料金は説明資料(ブルビック決勝用 付録A6・A7)と同じ数字。
      写真はフリー素材のイメージで、本番では実写に差し替える想定。
    ========================================================= */
 
@@ -75,6 +75,12 @@ const BD_PHOTOS = {
   "sake-brewery": { src: "img/sake-brewery.jpg", credit: "Asturio Cantabrio / CC BY-SA 4.0 / Wikimedia Commons" },
   "sake-bottles": { src: "img/sake-bottles.jpg", credit: "Asturio Cantabrio / CC BY-SA 4.0 / Wikimedia Commons" },
   "sake-tasting": { src: "img/sake-tasting.jpg", credit: "Gyutan lover / CC BY-SA 4.0 / Wikimedia Commons" },
+  "sauna-1": { src: "img/sauna-1.jpg", credit: "Antti Leppänen / CC BY 4.0 / Wikimedia Commons" },
+  "sauna-2": { src: "img/sauna-2.jpg", credit: "Periegetes / CC BY-SA 4.0 / Wikimedia Commons" },
+  "sauna-3": { src: "img/sauna-3.jpg", credit: "Miguel Virkkunen Carvalho / CC BY 2.0 / Wikimedia Commons" },
+  "shibu-1": { src: "img/shibu-1.jpg", credit: "Junyu-K / CC BY-SA 4.0 / Wikimedia Commons" },
+  "shibu-2": { src: "img/shibu-2.jpg", credit: "漱石の猫 / CC BY-SA 4.0 / Wikimedia Commons" },
+  "shibu-3": { src: "img/shibu-3.jpg", credit: "漱石の猫 / CC BY-SA 4.0 / Wikimedia Commons" },
 };
 
 /* ---------- 料金 ---------- */
@@ -88,7 +94,7 @@ const DAY_COSTS = {
 };
 
 /**
- * 1日ツアーの料金と内訳を人数から計算する(1回目＝下見あり)。
+ * 1日ツアーの料金を人数から計算する(1回目＝下見あり)。
  * 3名で合計 384,000円・1人 128,000円になる。
  */
 function bdDayQuote(guests) {
@@ -104,13 +110,7 @@ function bdDayQuote(guests) {
   lines.agency = Math.round((arranged + k.hosting) * DAY_COSTS.agencyRate);
   lines.survey = k.survey + k.reserve;
   const total = Object.values(lines).reduce((a, b) => a + b, 0);
-  /* 地域の事業者(酒蔵・車・ガイド・飲食店・地域の旅行会社)に支払われる分 */
-  const local = lines.brewery + lines.car + lines.guide + lines.lunch + lines.agency;
-  return {
-    lines, total, local,
-    perGuest: Math.round(total / guests / 100) * 100,
-    localShare: Math.round((local / total) * 100),
-  };
+  return { total, perGuest: Math.round(total / guests / 100) * 100 };
 }
 
 /* ---------- 商品データ ---------- */
@@ -254,7 +254,7 @@ const EXPERIENCES = [
     id: "mountain-sauna",
     kind: "session",
     status: "prep",
-    photos: [],
+    photos: ["sauna-1", "sauna-2", "sauna-3"],
     seed: 41,
     palette: "sauna",
     bookable: false,
@@ -277,7 +277,7 @@ const EXPERIENCES = [
     id: "kakishibu",
     kind: "session",
     status: "prep",
-    photos: [],
+    photos: ["shibu-1", "shibu-2", "shibu-3"],
     seed: 51,
     palette: "shibu",
     bookable: false,

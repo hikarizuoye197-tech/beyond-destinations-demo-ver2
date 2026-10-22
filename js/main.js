@@ -111,28 +111,9 @@ function bdExpCard(exp) {
     </a>`;
 }
 
-/* 地域に残る割合の横棒(fill は 0→p% へアニメーション) */
-function bdShareBar(p) {
-  return `
-    <div class="share">
-      <div class="share-bar"><span class="share-fill" data-p="${p}"></span></div>
-      <p class="share-num"><strong>${p}%</strong> ${t("label.localShare")}</p>
-    </div>`;
-}
-
-function bdAnimateShare(root = document) {
-  requestAnimationFrame(() =>
-    setTimeout(() => root.querySelectorAll(".share-fill").forEach((el) => {
-      el.style.width = el.dataset.p + "%";
-    }), 300)
-  );
-}
-
 /* ---------- ページ別処理 ---------- */
 
 function bdPageIndex() {
-  const share = document.getElementById("fact-local");
-  if (share) share.textContent = bdDayQuote(3).localShare + "%";
   const pickup = document.getElementById("pickup-grid");
   if (!pickup) return;
   pickup.innerHTML = ["mino-washi", "sake-brewer", "sake-day"].map((id) => bdExpCard(bdGetExperience(id))).join("");
@@ -211,22 +192,6 @@ function bdSideCard(exp) {
     </div>`;
 }
 
-/* 1日ツアーの「お金の行き先」 */
-function bdWhereMoney(guests = 3) {
-  const q = bdDayQuote(guests);
-  const order = ["brewery", "car", "guide", "lunch", "agency", "hosting", "survey"];
-  const localKeys = ["brewery", "car", "guide", "lunch", "agency"];
-  return `
-    <h2 class="section-title-sm">${t("detail.where")}</h2>
-    <p class="where-lead">${t("detail.where.lead", { n: guests })}</p>
-    <table class="breakdown where">
-      ${order.map((k) => `<tr class="${localKeys.includes(k) ? "local" : ""}"><td>${t("detail.line." + k)}</td><td>${bdYen(q.lines[k])}</td></tr>`).join("")}
-      <tr class="total"><td>${t("detail.rates.total")}</td><td>${bdYen(q.total)}</td></tr>
-    </table>
-    ${bdShareBar(q.localShare)}
-    <p class="breakdown-note">${t("detail.where.local", { p: q.localShare })}</p>`;
-}
-
 function bdPageDetail() {
   const wrap = document.getElementById("detail-root");
   if (!wrap) return;
@@ -261,7 +226,6 @@ function bdPageDetail() {
       <div class="detail-gallery">${bdImgTag(imgs[1])}${bdImgTag(imgs[2])}</div>
       <p class="photo-credit">${t("detail.photoCredit")} ${credits.join(" · ")}</p>`;
   }
-  if (exp.kind === "day") body += bdWhereMoney(3);
   if (exp.bookable) {
     body += `
       <div class="meet-note">
@@ -289,7 +253,6 @@ function bdPageDetail() {
       <aside class="detail-side">${bdSideCard(exp)}</aside>
     </div>`;
   bdBindImgFallback(wrap);
-  bdAnimateShare(wrap);
 }
 
 /* ---------- 空き状況の問い合わせ(3ステップ) ---------- */
@@ -318,8 +281,7 @@ function bdPageBooking() {
       </dl>
       <table class="breakdown">
         <tr class="total"><td>${t("req.estimate")}</td><td>${bdYen(bdRequestTotal(exp, state.guests))}</td></tr>
-      </table>
-      ${exp.kind === "day" ? bdShareBar(bdDayQuote(state.guests).localShare) : ""}`;
+      </table>`;
     return `
       <div class="side-card booking-summary">
         <h3>${t(interest ? "req.interestTitle" : "req.summary")}</h3>
@@ -398,7 +360,6 @@ function bdPageBooking() {
         </div>
         ${summaryHTML()}
       </div>`;
-    bdAnimateShare(root);
 
     const read = () => {
       const v = (id) => root.querySelector(id)?.value.trim();
@@ -458,13 +419,6 @@ function bdPageComplete() {
     return;
   }
 
-  const share = exp.kind === "day" ? `
-    <div class="complete-share">
-      <h2 class="section-title-sm">${t("done.local.title")}</h2>
-      ${bdShareBar(bdDayQuote(req.guests).localShare)}
-      <p class="breakdown-note">${bdDayQuote(req.guests).localShare}% ${t("done.local.body")}</p>
-    </div>` : "";
-
   root.innerHTML = `
     <p class="complete-kicker">${t("done.kicker")}</p>
     <h1 class="complete-title">${t("done.title")}</h1>
@@ -479,13 +433,11 @@ function bdPageComplete() {
     <ol class="timeline">
       ${[1, 2, 3, 4, 5].map((n) => `<li class="${n === 1 ? "done" : ""}"><span>${n}</span>${t("done.t" + n)}</li>`).join("")}
     </ol>
-    ${share}
 
     <div class="complete-actions">
       <a class="btn btn-primary" href="experiences.html">${t("done.another")}</a>
       <a class="btn btn-ghost" href="index.html">${t("done.home")}</a>
     </div>`;
-  bdAnimateShare(root);
 }
 
 /* ---------- 私たちについて ---------- */

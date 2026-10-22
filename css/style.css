@@ -434,16 +434,6 @@ input, select, textarea { font-family: inherit; }
 .rates td { text-align: right; padding: 9px 0; border-bottom: 1px solid var(--line); }
 .rates tr.hl td { color: var(--green-deep); font-weight: 600; }
 
-.where-lead { font-size: 0.85rem; color: var(--ink-soft); margin-bottom: 8px; }
-.breakdown.where tr.local td:first-child { padding-left: 14px; border-left: 3px solid var(--green-leaf); }
-.share { margin: 22px 0 6px; }
-.share-bar { height: 10px; background: var(--green-pale); overflow: hidden; }
-.share-fill {
-  display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--green-deep), var(--green-leaf));
-  transition: width 1.8s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.share-num { font-size: 0.82rem; color: var(--ink-soft); margin-top: 8px; }
-.share-num strong { font-family: var(--serif-en); font-size: 1.6rem; color: var(--green-deep); }
 .meet-status { margin-top: 10px; color: var(--green-deep) !important; }
 
 /* ---------- 問い合わせ・完了 ---------- */
@@ -456,7 +446,7 @@ input, select, textarea { font-family: inherit; }
 .complete-body strong { color: var(--green-deep); font-family: var(--serif-en); letter-spacing: 0.08em; }
 .complete-card { border: 1px solid var(--line); padding: 20px 24px; text-align: left; margin-bottom: 8px; }
 .complete-wrap .section-title-sm { text-align: left; }
-.timeline { list-style: none; text-align: left; margin-bottom: 20px; }
+.timeline { list-style: none; text-align: left; margin-bottom: 56px; }
 .timeline li { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 0.9rem; color: var(--ink-soft); }
 .timeline span {
   width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--line); flex-shrink: 0;
@@ -464,7 +454,6 @@ input, select, textarea { font-family: inherit; }
 }
 .timeline li.done { color: var(--green-deep); font-weight: 600; }
 .timeline li.done span { background: var(--green-deep); border-color: var(--green-deep); color: #fff; }
-.complete-share { text-align: left; margin-bottom: 56px; }
 
 /* ---------- 私たちについて ---------- */
 
@@ -479,9 +468,7 @@ input, select, textarea { font-family: inherit; }
 .role-arrow { font-size: 1.6rem; color: var(--green-leaf); }
 .role-partner { text-align: center; font-size: 0.84rem; color: var(--ink-soft); margin-top: 24px; }
 .origin { max-width: 640px; margin: 0 auto; text-align: center; }
-.origin-quote { font-size: clamp(1.2rem, 2.4vw, 1.6rem); font-weight: 600; line-height: 1.8; margin-bottom: 22px; }
 .origin-body { color: var(--ink-soft); font-size: 0.95rem; }
-.origin .strip-source { color: var(--ink-soft); }
 .team-name { font-size: 1.2rem; font-weight: 600; margin-bottom: 8px; }
 
 /* ---------- レスポンシブ ---------- */
