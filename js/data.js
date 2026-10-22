@@ -1,12 +1,12 @@
 /* =========================================================
-   BEYOND DESTINATIONS — データ層
-   体験データ / 市町村データ / プレースホルダー画像(SVG生成)
+   BEYOND DESTINATIONS — データ層(海外の旅行会社向け)
+   商品データ / 料金表 / 写真 / プレースホルダー画像(SVG生成)
    ---------------------------------------------------------
-   ※ 写真は本番では実写に差し替える想定。プロトタイプでは
-     オフラインでも崩れないよう、SVGで生成した風景アートを使用。
+   ※ 料金・内訳は説明資料(ブルビック決勝用 付録A6・A7)と同じ数字。
+     写真はフリー素材のイメージで、本番では実写に差し替える想定。
    ========================================================= */
 
-/* ---------- SVG風景アート生成(疑似写真プレースホルダー) ---------- */
+/* ---------- SVG風景アート生成(写真がない商品・読み込み失敗時) ---------- */
 
 function bdSeededRandom(seed) {
   let s = seed % 2147483647;
@@ -15,7 +15,7 @@ function bdSeededRandom(seed) {
 }
 
 /**
- * 山並み・棚田・海などを想起させる多層レイヤーのSVGを生成し、
+ * 山並みを想起させる多層レイヤーのSVGを生成し、
  * data URI として返す。palette: [空, 遠景, 中景, 近景]
  */
 function bdArt(seed, palette, opts = {}) {
@@ -57,364 +57,272 @@ function bdArt(seed, palette, opts = {}) {
   return "data:image/svg+xml," + encodeURIComponent(svg);
 }
 
-/* カテゴリ別パレット(自然・生業を想起する落ち着いたトーン) */
+/* 商品別パレット(自然・生業を想起する落ち着いたトーン) */
 const BD_PALETTES = {
-  washi:   ["#dfe8dc", "#a8bfa0", "#6f9271", "#31543f"],
-  pottery: ["#e9e2d6", "#c9a98c", "#9a7154", "#5c4633"],
-  forge:   ["#e2e4e6", "#a9b4b8", "#6d7f85", "#37474d"],
-  sea:     ["#dceaea", "#9dc4c0", "#5f938f", "#2f5f58"],
-  tanada:  ["#e4ecd9", "#b3cc8f", "#7ba05b", "#3f6635"],
-  cycle:   ["#e0ebe3", "#a5c9a8", "#649b6d", "#2f5c44"],
+  washi:  ["#dfe8dc", "#a8bfa0", "#6f9271", "#31543f"],
+  sake:   ["#e9e2d6", "#c9a98c", "#9a7154", "#5c4633"],
+  sauna:  ["#e2e8e6", "#9fb8b0", "#5f8679", "#2c4c42"],
+  shibu:  ["#efe4d8", "#d2a77f", "#a86f45", "#6a3f24"],
 };
 
-/* ---------- 市町村データ ---------- */
-/* silhouette: 200x200 viewBox の抽象化シルエットパス(プロトタイプ用) */
+/* ---------- 写真(フリー素材のイメージ) ---------- */
+/* 出典は詳細ページの写真下に表示する。本番では権利処理済みの実写に差し替える。 */
 
-const MUNICIPALITIES = {
-  mino: {
-    id: "mino",
-    baseProgress: 34,
-    name: { ja: "岐阜県 美濃市", en: "Mino City, Gifu", fr: "Mino, Gifu" },
-    silhouette:
-      "M96,14 C128,8 158,26 172,52 C188,80 184,116 168,142 C154,166 128,188 98,186 C66,184 36,164 24,134 C12,104 20,68 42,44 C58,26 72,18 96,14 Z",
-  },
-  tokoname: {
-    id: "tokoname",
-    baseProgress: 41,
-    name: { ja: "愛知県 常滑市", en: "Tokoname City, Aichi", fr: "Tokoname, Aichi" },
-    silhouette:
-      "M108,10 C134,18 148,44 150,72 C152,98 144,120 148,146 C151,168 138,188 114,190 C88,192 70,176 62,152 C52,124 56,96 52,68 C48,40 64,16 88,12 C95,10 101,9 108,10 Z",
-  },
-  seki: {
-    id: "seki",
-    baseProgress: 38,
-    name: { ja: "岐阜県 関市", en: "Seki City, Gifu", fr: "Seki, Gifu" },
-    silhouette:
-      "M60,22 C90,10 124,14 150,32 C176,50 188,82 178,110 C168,138 140,148 118,164 C96,180 68,190 44,176 C20,162 14,130 22,102 C30,72 34,34 60,22 Z",
-  },
-  nishio: {
-    id: "nishio",
-    baseProgress: 29,
-    name: { ja: "愛知県 西尾市", en: "Nishio City, Aichi", fr: "Nishio, Aichi" },
-    silhouette:
-      "M92,12 C122,6 154,20 168,46 C182,72 176,102 164,128 C154,150 160,176 138,186 C114,196 88,184 68,168 C46,150 26,128 28,100 C30,70 40,38 66,24 C74,20 84,14 92,12 Z",
-  },
-  ena: {
-    id: "ena",
-    baseProgress: 46,
-    name: { ja: "岐阜県 恵那市", en: "Ena City, Gifu", fr: "Ena, Gifu" },
-    silhouette:
-      "M100,8 C126,16 136,42 152,62 C170,84 192,100 186,128 C180,156 152,168 126,178 C102,188 74,192 52,176 C30,160 24,130 30,104 C36,78 48,56 66,38 C76,28 88,16 100,8 Z",
-  },
-  mihama: {
-    id: "mihama",
-    baseProgress: 25,
-    name: { ja: "愛知県 美浜町", en: "Mihama Town, Aichi", fr: "Mihama, Aichi" },
-    silhouette:
-      "M104,12 C126,20 134,46 138,72 C142,100 150,126 142,152 C134,178 116,192 94,188 C72,184 62,162 58,136 C54,108 50,80 58,54 C66,28 84,6 104,12 Z",
-  },
+const BD_PHOTOS = {
+  "washi-1": { src: "img/washi-1.jpg", credit: "TR15336300101 / CC BY-SA 4.0 / Wikimedia Commons" },
+  "washi-2": { src: "img/washi-2.jpg", credit: "TR15336300101 / CC BY-SA 4.0 / Wikimedia Commons" },
+  "mino-street": { src: "img/mino-street.jpg", credit: "Asturio Cantabrio / CC BY-SA 4.0 / Wikimedia Commons" },
+  "sake-brewery": { src: "img/sake-brewery.jpg", credit: "Asturio Cantabrio / CC BY-SA 4.0 / Wikimedia Commons" },
+  "sake-bottles": { src: "img/sake-bottles.jpg", credit: "Asturio Cantabrio / CC BY-SA 4.0 / Wikimedia Commons" },
+  "sake-tasting": { src: "img/sake-tasting.jpg", credit: "Gyutan lover / CC BY-SA 4.0 / Wikimedia Commons" },
 };
 
-/* ---------- 体験データ ---------- */
-/* price: 1人あたり(円) / co2: 1人あたり削減見込み(kg) / score: 100点満点 */
+/* ---------- 料金 ---------- */
+
+/* 1日ツアー(酒蔵・岐阜駅発着)の1回あたり費用。付録A6・A7と同じ。
+   perGuest は人数に比例する費用、perGroup は5名まで同じ費用。 */
+const DAY_COSTS = {
+  perGuest: { brewery: 30000, lunch: 15000 },
+  perGroup: { car: 50000, guide: 55000, lunchCrew: 5000, hosting: 50000, survey: 20000, reserve: 10000 },
+  agencyRate: 0.2, // 地域の旅行会社の手数料(手配分＋企画料の20%)
+};
+
+/**
+ * 1日ツアーの料金と内訳を人数から計算する(1回目＝下見あり)。
+ * 3名で合計 384,000円・1人 128,000円になる。
+ */
+function bdDayQuote(guests) {
+  const g = DAY_COSTS.perGuest, k = DAY_COSTS.perGroup;
+  const lines = {
+    brewery: g.brewery * guests,
+    car: k.car,
+    guide: k.guide,
+    lunch: g.lunch * guests + k.lunchCrew,
+  };
+  const arranged = lines.brewery + lines.car + lines.guide + lines.lunch;
+  lines.hosting = k.hosting;
+  lines.agency = Math.round((arranged + k.hosting) * DAY_COSTS.agencyRate);
+  lines.survey = k.survey + k.reserve;
+  const total = Object.values(lines).reduce((a, b) => a + b, 0);
+  /* 地域の事業者(酒蔵・車・ガイド・飲食店・地域の旅行会社)に支払われる分 */
+  const local = lines.brewery + lines.car + lines.guide + lines.lunch + lines.agency;
+  return {
+    lines, total, local,
+    perGuest: Math.round(total / guests / 100) * 100,
+    localShare: Math.round((local / total) * 100),
+  };
+}
+
+/* ---------- 商品データ ---------- */
+/* kind: "session"＝体験のみ(現地集合・現地解散) / "day"＝車・ガイドつきの1日
+   status: pilot＝試験実施済み / talks＝事業者と相談中 / planned＝組み立て中 / prep＝準備中 */
 
 const EXPERIENCES = [
   {
     id: "mino-washi",
-    category: "craft",
-    muni: "mino",
+    kind: "session",
+    status: "pilot",
     price: 30000,
-    score: 92,
-    co2: 12.4,
-    duration: 3.5,
-    capacity: 6,
-    seeds: [11, 12, 13],
+    hours: 2,
+    minGuests: 1,
+    maxGuests: 3,
+    photos: ["washi-1", "washi-2", "mino-street"],
+    seed: 11,
     palette: "washi",
+    bookable: true,
     t: {
-      ja: {
-        name: "美濃手すき和紙 — 千三百年の紙を漉く",
-        tagline: "ユネスコ無形文化遺産の技を、職人の工房で。",
-        desc:
-          "清流・板取川の水で育まれた美濃和紙。人間国宝の系譜を継ぐ工房で、原料の楮(こうぞ)に触れ、簀桁(すけた)を揺らし、あなた自身の一枚を漉き上げます。",
-        highlights: ["現役職人による手すき指導", "原料処理から乾燥までの全工程見学", "漉いた和紙はその場でお持ち帰り"],
-      },
       en: {
-        name: "Mino Washi — Pulling Paper with 1,300 Years of History",
-        tagline: "A UNESCO-listed craft, learned inside a working studio.",
+        area: "Mino City, Gifu",
+        name: "Mino Washi — Make paper with a master papermaker",
+        tagline: "Not a craft-centre workshop. Two hours at the vat with the maker.",
         desc:
-          "Mino washi is raised on the clear waters of the Itadori River. In a studio carrying the lineage of Living National Treasures, you will handle raw kozo fibre, rock the bamboo screen, and pull a sheet of your own.",
-        highlights: ["Hands-on guidance from a working artisan", "See every step from raw fibre to drying", "Take your finished sheet home"],
+          "Hon-minoshi, the paper of Mino, was inscribed by UNESCO in 2014. We are arranging sessions with a papermaker who has worked with artists from abroad. Your clients visit the studio, pull sheets alongside the maker, and hear the stories behind the work — with no other visitors in the room.",
+        steps: ["Visit the studio", "Pull paper with the maker", "Hear the work and the craft"],
+        includes: ["Private session with the papermaker (2 hours)", "Materials, and the sheets your clients make", "Interpreter on request"],
+        note: "Pilot session run with international students in September 2026. Maker and schedule being finalised.",
       },
-      fr: {
-        name: "Washi de Mino — 1 300 ans de papier entre vos mains",
-        tagline: "Un savoir-faire classé à l'UNESCO, dans un atelier en activité.",
+      ja: {
+        area: "岐阜県 美濃市",
+        name: "美濃和紙 — 職人と紙を漉く",
+        tagline: "観光施設の体験ではなく、職人と向き合う2時間。",
         desc:
-          "Le washi de Mino naît des eaux claires de la rivière Itadori. Dans un atelier héritier de Trésors nationaux vivants, vous manierez la fibre de kozo, bercerez le tamis de bambou et tirerez votre propre feuille.",
-        highlights: ["Encadrement par un artisan en activité", "Toutes les étapes, de la fibre au séchage", "Repartez avec votre feuille"],
+          "本美濃紙は2014年にユネスコ無形文化遺産に登録されました。海外のアーティストと協業してきた職人と、体験を調整しています。工房を訪ね、職人と一緒に紙を漉き、作品と技の話を聞きます。ほかの観光客はいません。",
+        steps: ["工房を訪ねる", "職人と紙を漉く", "作品と技の話を聞く"],
+        includes: ["職人との少人数の時間(2時間)", "材料費・漉いた紙", "通訳(ご希望に応じて)"],
+        note: "2026年9月に留学生と有償で試験実施。職人・日程は調整中です。",
       },
     },
   },
   {
-    id: "seki-hamono",
-    category: "craft",
-    muni: "seki",
-    price: 36000,
-    score: 90,
-    co2: 11.8,
-    duration: 4,
-    capacity: 4,
-    seeds: [21, 22, 23],
-    palette: "forge",
-    t: {
-      ja: {
-        name: "関の刃物鍛冶 — 炎と鋼の仕事場へ",
-        tagline: "七百年続く刀鍛冶の町で、小刀を鍛える。",
-        desc:
-          "鎌倉時代から刀匠が集った関市。現役の鍛冶職人とともに火床(ほど)の前に立ち、鋼を熱し、打ち、研ぎ上げて、世界にひとつの小刀を仕上げます。",
-        highlights: ["火造りから研ぎまでを職人と一対一で", "鍛えた小刀はお持ち帰り", "刃物ミュージアム入館付き"],
-      },
-      en: {
-        name: "Seki Blades — Into the Workshop of Fire and Steel",
-        tagline: "Forge a small knife in a town of 700 years of swordsmiths.",
-        desc:
-          "Swordsmiths have gathered in Seki since the Kamakura era. Standing at the forge beside a working smith, you will heat, hammer and polish your own small knife — one that exists nowhere else.",
-        highlights: ["One-on-one forging and sharpening with a smith", "Take your forged knife home", "Blade museum admission included"],
-      },
-      fr: {
-        name: "Lames de Seki — L'atelier du feu et de l'acier",
-        tagline: "Forgez un couteau dans une ville de forgerons depuis 700 ans.",
-        desc:
-          "Depuis l'époque de Kamakura, les forgerons de sabres se rassemblent à Seki. Aux côtés d'un forgeron en activité, vous chaufferez, martèlerez et polirez votre propre couteau — unique au monde.",
-        highlights: ["Forge et affûtage en tête-à-tête avec un artisan", "Repartez avec votre couteau", "Entrée au musée de la coutellerie incluse"],
-      },
-    },
-  },
-  {
-    id: "tokoname-yaki",
-    category: "craft",
-    muni: "tokoname",
-    price: 28000,
-    score: 88,
-    co2: 9.6,
-    duration: 3,
-    capacity: 8,
-    seeds: [31, 32, 33],
-    palette: "pottery",
-    t: {
-      ja: {
-        name: "常滑焼 — 土と窯の路地を歩き、轆轤を回す",
-        tagline: "日本六古窯のまちで、朱泥の急須づくり。",
-        desc:
-          "煙突と登窯の残る「やきもの散歩道」を職人と歩き、工房で轆轤(ろくろ)に向かいます。千年の産地・常滑の土に触れ、朱泥の器を自らの手で形にします。",
-        highlights: ["職人と歩くやきもの散歩道", "電動轆轤での作陶体験", "焼成後、作品を海外発送可能"],
-      },
-      en: {
-        name: "Tokoname Ware — Lanes of Clay, and the Potter's Wheel",
-        tagline: "Shape red-clay ware in one of Japan's Six Ancient Kilns.",
-        desc:
-          "Walk the Pottery Footpath of chimneys and climbing kilns with an artisan, then sit at the wheel in their studio. Touch the clay of a thousand-year-old kiln town and shape your own vessel.",
-        highlights: ["Walk the Pottery Footpath with an artisan", "Throw on the potter's wheel", "Fired pieces shipped worldwide"],
-      },
-      fr: {
-        name: "Céramique de Tokoname — Ruelles d'argile et tour de potier",
-        tagline: "Façonnez la terre rouge dans l'un des Six Fours Anciens du Japon.",
-        desc:
-          "Parcourez le Sentier de la céramique, entre cheminées et fours à flanc de colline, puis installez-vous au tour dans l'atelier. Touchez l'argile d'une ville potière millénaire et façonnez votre pièce.",
-        highlights: ["Promenade guidée par un artisan", "Initiation au tour de potier", "Expédition internationale des pièces cuites"],
-      },
-    },
-  },
-  {
-    id: "mikawa-teichiami",
-    category: "agri",
-    muni: "nishio",
+    id: "sake-brewer",
+    kind: "session",
+    status: "talks",
     price: 30000,
-    score: 94,
-    co2: 14.2,
-    duration: 5,
-    capacity: 6,
-    seeds: [41, 42, 43],
-    palette: "sea",
+    hours: 2,
+    minGuests: 1,
+    maxGuests: 3,
+    photos: ["sake-brewery", "sake-bottles", "sake-tasting"],
+    seed: 21,
+    palette: "sake",
+    bookable: true,
     t: {
-      ja: {
-        name: "三河湾 定置網漁 — 夜明けの海に出る",
-        tagline: "漁師の船に乗り、揚がったばかりの魚を浜で味わう。",
-        desc:
-          "早朝、三河湾の定置網へ漁師とともに出港します。網を揚げ、魚を選り分け、港に戻ったら獲れたての魚を浜料理に。海と生きる暮らしを、一日かけて体に刻む体験です。",
-        highlights: ["現役漁師の船に同乗", "揚げたての魚を浜で調理・実食", "持続可能な定置網漁の仕組みを学ぶ"],
-      },
       en: {
-        name: "Mikawa Bay Fixed-Net Fishing — Out to Sea at Dawn",
-        tagline: "Board a fisherman's boat, then taste the catch on the shore.",
+        area: "Gifu Prefecture",
+        name: "Sake — Taste with the brewer, inside the brewery",
+        tagline: "Not a tasting counter. A small-group tasting led by the person who makes it.",
         desc:
-          "At first light, sail out to the fixed nets of Mikawa Bay with working fishermen. Haul the nets, sort the catch, and back in port, cook the morning's fish shore-style. A full day inside a life lived with the sea.",
-        highlights: ["Ride aboard a working fishing boat", "Cook and eat the fresh catch on the shore", "Learn how fixed-net fishing stays sustainable"],
+          "Gifu's breweries draw on mountain water and generations of family craft. Your clients walk the brewery, learn how the sake is made, and taste side by side with the brewer. We are opening our first sessions with a brewery in Tajimi.",
+        steps: ["Visit the brewery", "Learn how it is made", "Taste with the brewer"],
+        includes: ["Brewery visit led by the brewer (2 hours)", "Tasting flight", "Interpreter on request"],
+        note: "In discussion with breweries. Content and rate will be set with the brewery.",
       },
-      fr: {
-        name: "Pêche au filet fixe dans la baie de Mikawa — En mer à l'aube",
-        tagline: "Embarquez avec les pêcheurs, puis goûtez la prise sur le rivage.",
+      ja: {
+        area: "岐阜県",
+        name: "日本酒 — 酒蔵で、造り手と味わう",
+        tagline: "観光客向けの試飲ではなく、造り手が案内する少人数の利き酒。",
         desc:
-          "Aux premières lueurs, partez vers les filets fixes de la baie de Mikawa avec des pêcheurs en activité. Relevez les filets, triez la prise, puis cuisinez le poisson du matin au port. Une journée entière dans une vie liée à la mer.",
-        highlights: ["À bord d'un vrai bateau de pêche", "Cuisine et dégustation de la prise sur place", "Comprendre la durabilité du filet fixe"],
+          "山の水と、代々受け継がれた家の技。酒蔵を訪ねて、蔵で造りを知り、造り手と一緒に飲み比べます。まずは多治見の酒蔵と最初の体験をつくります。",
+        steps: ["酒蔵を訪ねる", "蔵で造りを知る", "造り手と飲み比べ"],
+        includes: ["造り手による蔵の案内(2時間)", "飲み比べ", "通訳(ご希望に応じて)"],
+        note: "酒蔵と相談中です。内容と料金は酒蔵と決めます。",
       },
     },
   },
   {
-    id: "ena-tanada",
-    category: "agri",
-    muni: "ena",
-    price: 26000,
-    score: 95,
-    co2: 13.5,
-    duration: 4,
-    capacity: 10,
-    seeds: [51, 52, 53],
-    palette: "tanada",
+    id: "sake-day",
+    kind: "day",
+    status: "planned",
+    hours: 6,
+    minGuests: 2,
+    maxGuests: 5,
+    photos: ["sake-tasting", "sake-brewery", "sake-bottles"],
+    seed: 31,
+    palette: "sake",
+    bookable: true,
+    itinerary: [
+      { time: "9:30", key: "pickup" },
+      { time: "10:30", key: "brewery" },
+      { time: "13:00", key: "lunch" },
+      { time: "15:30", key: "return" },
+    ],
     t: {
-      ja: {
-        name: "坂折棚田 — 四百年の石積みで米をつくる",
-        tagline: "「日本の棚田百選」の風景の中へ、農家とともに。",
-        desc:
-          "戦国時代から積み上げられた石積みの棚田・坂折。季節ごとの農作業(田植え・草取り・稲刈り)を農家と行い、棚田米のおにぎりを畦道でいただきます。景観を守ることが、そのまま体験になります。",
-        highlights: ["季節の農作業を農家と体験", "棚田米の昼食つき", "石積み保全の現場を学ぶ"],
-      },
       en: {
-        name: "Sakaori Rice Terraces — Farming on 400-Year-Old Stone Walls",
-        tagline: "Step into one of Japan's 100 finest terraced landscapes.",
+        area: "From Gifu Station",
+        name: "A private day in sake country — chauffeur & guide",
+        tagline: "Door to door from Gifu Station: the brewery, a local lunch, and back by mid-afternoon.",
         desc:
-          "The stone-walled terraces of Sakaori have been stacked since the Sengoku era. Work the season's tasks — planting, weeding, harvest — alongside local farmers, then eat terrace-grown rice onigiri on the ridge paths. Keeping the landscape alive is the experience.",
-        highlights: ["Seasonal farm work with local farmers", "Lunch of terrace-grown rice", "See stone-wall conservation up close"],
+          "A full private day built around the sake session. A licensed chauffeur-driven car and an interpreter-guide stay with your clients all day. Transport and arrangements are made by our partner, a registered travel agency in Gifu.",
+        itinerary: {
+          pickup: "Pick-up at Gifu Station by private car",
+          brewery: "Sake brewery — tour and tasting with the brewer (2 hours)",
+          lunch: "Lunch at a local restaurant",
+          return: "Back at Gifu Station",
+        },
+        includes: [
+          "Brewery session with the brewer",
+          "Chauffeur-driven car, licensed for paid passenger transport (8 hours)",
+          "Interpreter-guide for the whole day",
+          "Lunch at a local restaurant",
+          "Arrangement by a registered travel agency in Gifu",
+        ],
+        note: "Rates below are for the first run and include a site visit. Later runs are slightly lower.",
       },
-      fr: {
-        name: "Rizières en terrasses de Sakaori — Cultiver sur 400 ans de murets",
-        tagline: "Entrez dans l'un des 100 plus beaux paysages de rizières du Japon.",
+      ja: {
+        area: "岐阜駅発着",
+        name: "酒蔵をめぐる1日 — 車・ガイドつきの貸切",
+        tagline: "岐阜駅から酒蔵、地元の昼食、そして15時半ごろに岐阜駅へ。",
         desc:
-          "Les terrasses de pierre de Sakaori s'empilent depuis l'époque Sengoku. Participez aux travaux de saison — repiquage, désherbage, moisson — aux côtés des agriculteurs, puis dégustez des onigiri de riz des terrasses sur les diguettes. Préserver le paysage, c'est l'expérience même.",
-        highlights: ["Travaux agricoles de saison avec les fermiers", "Déjeuner de riz des terrasses", "La conservation des murets de pierre"],
+          "酒蔵の体験を中心にした、貸切の1日です。緑ナンバーのハイヤーと通訳ガイドが1日同行します。車と手配は、旅行業の登録を持つ岐阜の旅行会社が行います。",
+        itinerary: {
+          pickup: "岐阜駅をハイヤーで出発",
+          brewery: "酒蔵 — 造り手の案内で蔵を見る・利き酒(2時間)",
+          lunch: "地元の料理店で昼食",
+          return: "岐阜駅に戻る",
+        },
+        includes: [
+          "造り手による酒蔵の体験",
+          "ハイヤー(緑ナンバー・8時間)",
+          "通訳ガイド(1日同行)",
+          "地元の料理店での昼食",
+          "旅行業の登録を持つ岐阜の旅行会社による手配",
+        ],
+        note: "下の料金は1回目(下見を含む)の料金です。2回目からは少し下がります。",
       },
     },
   },
   {
-    id: "chita-cycling",
-    category: "cycling",
-    muni: "mihama",
-    price: 24000,
-    score: 85,
-    co2: 16.8,
-    duration: 6,
-    capacity: 8,
-    seeds: [61, 62, 63],
-    palette: "cycle",
+    id: "mountain-sauna",
+    kind: "session",
+    status: "prep",
+    photos: [],
+    seed: 41,
+    palette: "sauna",
+    bookable: false,
     t: {
-      ja: {
-        name: "知多半島 海辺サイクリング — 漁村と醸造のまちを繋ぐ",
-        tagline: "海沿い40km。土地の恵みを味わいながら走る。",
-        desc:
-          "美浜の海岸線から半島の漁村・味噌蔵・酒蔵をつなぐガイドライドです。E-bikeでゆったりと走り、立ち寄る先々で土地の生産者と言葉を交わします。移動そのものがゼロエミッションの旅になります。",
-        highlights: ["E-bike・ヘルメット込み", "漁村・醸造蔵での試食つき", "地元ガイドの伴走"],
-      },
       en: {
-        name: "Chita Peninsula Seaside Ride — Fishing Villages and Brewing Towns",
-        tagline: "40 km along the coast, tasting the land as you go.",
-        desc:
-          "A guided e-bike ride linking Mihama's coastline with the peninsula's fishing villages, miso warehouses and sake breweries. Ride at an easy pace, and meet the producers at every stop. The journey itself is zero-emission.",
-        highlights: ["E-bike and helmet included", "Tastings at fishing villages and breweries", "Accompanied by a local guide"],
+        area: "Gifu Prefecture",
+        name: "A sauna deep in the mountains",
+        tagline: "In the forest, far from any tour route.",
+        desc: "We are preparing this experience with its hosts. Register your interest and we will send details when it opens.",
       },
-      fr: {
-        name: "Péninsule de Chita à vélo — Villages de pêcheurs et brasseries",
-        tagline: "40 km le long de la côte, en goûtant le terroir.",
-        desc:
-          "Une sortie guidée en vélo électrique reliant le littoral de Mihama aux villages de pêcheurs, entrepôts de miso et brasseries de saké de la péninsule. Roulez à un rythme paisible et rencontrez les producteurs à chaque étape. Le trajet lui-même est zéro émission.",
-        highlights: ["Vélo électrique et casque inclus", "Dégustations chez les producteurs", "Accompagnement par un guide local"],
+      ja: {
+        area: "岐阜県",
+        name: "山奥のサウナ",
+        tagline: "観光ルートから遠く離れた、森の中で。",
+        desc: "受け入れ先と準備中です。ご関心をお寄せいただければ、受け付けを始めたときにご案内します。",
+      },
+    },
+  },
+  {
+    id: "kakishibu",
+    kind: "session",
+    status: "prep",
+    photos: [],
+    seed: 51,
+    palette: "shibu",
+    bookable: false,
+    t: {
+      en: {
+        area: "Gifu Prefecture",
+        name: "Kakishibu — a thousand years of persimmon dye",
+        tagline: "Fermented persimmon tannin that dyes and protects paper and cloth.",
+        desc: "We are preparing this experience with the maker. Register your interest and we will send details when it opens.",
+      },
+      ja: {
+        area: "岐阜県",
+        name: "千年の柿渋",
+        tagline: "紙や布を染め、守ってきた、発酵させた渋柿の液。",
+        desc: "つくり手と準備中です。ご関心をお寄せいただければ、受け付けを始めたときにご案内します。",
       },
     },
   },
 ];
 
-/* ---------- 仮写真(Wikimedia Commons) ---------- */
-/* プロトタイプ用のフリー素材。本番では権利処理済みの実写に差し替える。
-   読み込み失敗時は bdExpImages() が SVGアートへフォールバックする。 */
-
-const EXP_PHOTOS = {
-  "mino-washi": [
-    "Japanese paper making 02.jpg",
-    "Japanese paper making 04.jpg",
-    "うだつの上がる町並み (岐阜県美濃市)-うだつmino udatsu020.jpg",
-  ],
-  "seki-hamono": [
-    "Forge de Tsuneharu Matsuda - 3 - 2016-04-19.jpg",
-    "Des briques d'acier au katana - 2016-04-19.jpg",
-    "Seki Sword Tradition Museum 20220716 04.jpg",
-  ],
-  "tokoname-yaki": [
-    "Yakimono-sanpomichi Tokoname (Aichi) 05.jpg",
-    "Noborigama Tokoname 01.jpg",
-    "Yakimono-sanpomichi Tokoname (Aichi) 28.jpg",
-  ],
-  "mikawa-teichiami": [
-    "Mikawa Bay and Saku Island.jpg",
-    "Set Net Fishery off Enoshima.jpg",
-    "網野町三津の定置網漁.jpg",
-  ],
-  "ena-tanada": [
-    "Sakaori Tanada.jpg",
-    "Sakaori Tanada 20210723 01.jpg",
-    "Sakaori Tanada from Mount Kasagi.jpg",
-  ],
-  "chita-cycling": [
-    "Noma lighthouse.jpg",
-    "Nomasaki Todai.jpg",
-    "野間灯台 Beacon Lighthouse Isewan Noma, Aichi - panoramio.jpg",
-  ],
-};
-
-function bdPhotoURL(fileName, width = 1200) {
-  return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(fileName)}?width=${width}`;
-}
-
 /* ---------- データアクセスヘルパー ---------- */
-
-const RETURN_RATE = 0.8; // 地域還元率(手数料20%)
 
 function bdGetExperience(id) {
   return EXPERIENCES.find((e) => e.id === id) || null;
 }
 
 function bdExpText(exp) {
-  return exp.t[bdLang()] || exp.t.ja;
+  return exp.t[bdLang()] || exp.t.en;
 }
 
-function bdMuniName(muniId) {
-  const m = MUNICIPALITIES[muniId];
-  return m ? (m.name[bdLang()] || m.name.ja) : "";
-}
-
-/* 各体験の画像: 仮写真があればそれを使い、失敗時用にSVGアートを添える */
+/* 各商品の画像: 写真があればそれを使い、失敗時用にSVGアートを添える */
 function bdExpImages(exp) {
-  const photos = EXP_PHOTOS[exp.id] || [];
-  return exp.seeds.map((s, i) => {
-    const art = bdArt(s, BD_PALETTES[exp.palette]);
-    return { src: photos[i] ? bdPhotoURL(photos[i]) : art, fallback: art };
-  });
+  const art = (i) => bdArt(exp.seed + i, BD_PALETTES[exp.palette]);
+  if (!exp.photos.length) return [0, 1, 2].map((i) => ({ src: art(i), fallback: art(i), credit: "" }));
+  return exp.photos.map((key, i) => ({ src: BD_PHOTOS[key].src, fallback: art(i), credit: BD_PHOTOS[key].credit }));
 }
 
-/* ---------- 市町村サステナブル度の進捗管理(localStorage) ---------- */
-
-function bdMuniProgress(muniId) {
-  const stored = JSON.parse(localStorage.getItem("bd-muni-progress") || "{}");
-  return stored[muniId] ?? MUNICIPALITIES[muniId].baseProgress;
+/* 一覧・カードに出す「〜から」の料金(1人あたり) */
+function bdFromPrice(exp) {
+  if (exp.kind === "day") return bdDayQuote(exp.maxGuests).perGuest;
+  return exp.price || null;
 }
 
-/**
- * 予約完了時に市町村のサステナブル度を加算する(ダミー計算)。
- * 上昇分 = 人数 × (スコア/100) × 1.6pt、上限99%
- */
-function bdAddMuniProgress(muniId, guests, score) {
-  const stored = JSON.parse(localStorage.getItem("bd-muni-progress") || "{}");
-  const current = stored[muniId] ?? MUNICIPALITIES[muniId].baseProgress;
-  const gain = Math.round(guests * (score / 100) * 1.6 * 10) / 10;
-  const next = Math.min(99, Math.round((current + gain) * 10) / 10);
-  stored[muniId] = next;
-  localStorage.setItem("bd-muni-progress", JSON.stringify(stored));
-  return { before: current, after: next, gain: Math.round((next - current) * 10) / 10 };
+/* 予約リクエストの合計(目安) */
+function bdRequestTotal(exp, guests) {
+  if (exp.kind === "day") return bdDayQuote(guests).total;
+  return exp.price * guests;
 }
