@@ -77,10 +77,11 @@ const BD_PHOTOS = {
   "sake-tasting": { src: "img/sake-tasting.jpg", credit: "Gyutan lover / CC BY-SA 4.0 / Wikimedia Commons" },
   "sauna-1": { src: "img/sauna-1.jpg", credit: "Antti Leppänen / CC BY 4.0 / Wikimedia Commons" },
   "sauna-2": { src: "img/sauna-2.jpg", credit: "Periegetes / CC BY-SA 4.0 / Wikimedia Commons" },
-  "sauna-3": { src: "img/sauna-3.jpg", credit: "Miguel Virkkunen Carvalho / CC BY 2.0 / Wikimedia Commons" },
-  "shibu-1": { src: "img/shibu-1.jpg", credit: "Junyu-K / CC BY-SA 4.0 / Wikimedia Commons" },
   "shibu-2": { src: "img/shibu-2.jpg", credit: "漱石の猫 / CC BY-SA 4.0 / Wikimedia Commons" },
-  "shibu-3": { src: "img/shibu-3.jpg", credit: "漱石の猫 / CC BY-SA 4.0 / Wikimedia Commons" },
+  /* 自分たちで撮った写真 */
+  "sauna-river": { src: "img/sauna-river.jpg", credit: "BEYOND DESTINATIONS" },
+  "shibu-own-1": { src: "img/shibu-own-1.jpg", credit: "BEYOND DESTINATIONS" },
+  "shibu-own-2": { src: "img/shibu-own-2.jpg", credit: "BEYOND DESTINATIONS" },
 };
 
 /* ---------- 料金 ---------- */
@@ -254,7 +255,7 @@ const EXPERIENCES = [
     id: "mountain-sauna",
     kind: "session",
     status: "prep",
-    photos: ["sauna-1", "sauna-2", "sauna-3"],
+    photos: ["sauna-river", "sauna-1", "sauna-2"],
     seed: 41,
     palette: "sauna",
     bookable: false,
@@ -277,7 +278,7 @@ const EXPERIENCES = [
     id: "kakishibu",
     kind: "session",
     status: "prep",
-    photos: ["shibu-1", "shibu-2", "shibu-3"],
+    photos: ["shibu-own-1", "shibu-own-2", "shibu-2"],
     seed: 51,
     palette: "shibu",
     bookable: false,
