@@ -284,13 +284,13 @@ const EXPERIENCES = [
     bookable: false,
     t: {
       en: {
-        area: "Gifu Prefecture",
+        area: "Yamagata City, Gifu",
         name: "Kakishibu — a thousand years of persimmon dye",
         tagline: "Fermented persimmon tannin that dyes and protects paper and cloth.",
         desc: "We are preparing this experience with the maker. Register your interest and we will send details when it opens.",
       },
       ja: {
-        area: "岐阜県",
+        area: "岐阜県 山県市",
         name: "千年の柿渋",
         tagline: "紙や布を染め、守ってきた、発酵させた渋柿の液。",
         desc: "つくり手と準備中です。ご関心をお寄せいただければ、受け付けを始めたときにご案内します。",
